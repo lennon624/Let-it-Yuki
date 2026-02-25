@@ -1,0 +1,25 @@
+# 开发工具和临时文件
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# 日志文件
+*.log
+*.err
+
+# 临时文件
+*.tmp
+*.temp
+*.cache
+
+# Chrome 插件开发临时文件
+*.crx
+*.pem
+
+# 测试和调试文件
+debug.log
+*.backup

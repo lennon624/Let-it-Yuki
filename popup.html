@@ -1,0 +1,51 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            width: 200px;
+            padding: 10px;
+            font-family: Arial, sans-serif;
+        }
+        h1 {
+            font-size: 16px;
+            margin: 0 0 10px 0;
+            color: #333;
+        }
+        p {
+            font-size: 12px;
+            color: #666;
+            margin: 0 0 10px 0;
+        }
+        .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        button {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        #toggleBtn {
+            background-color: #4CAF50;
+            color: white;
+        }
+        #toggleBtn.off {
+            background-color: #f44336;
+        }
+    </style>
+</head>
+<body>
+    <h1>雪花飘落动画</h1>
+    <p>在网页上添加美丽的雪花动画效果</p>
+    <div class="controls">
+        <button id="toggleBtn">关闭雪花</button>
+        <button id="settingsBtn">设置</button>
+    </div>
+
+    <script src="popup.js"></script>
+</body>
+</html>
