@@ -20,7 +20,7 @@ canvas.height = height;
 
 // 4. 雪花粒子系统（使用对象池技术）
 const snowflakes = [];
-const MAX_PARTICLES = 200; // 设置雪花数量上限
+const MAX_PARTICLES = 400; // 大幅增加雪花数量到 400 片
 
 // 创建雪花对象池
 function createSnowflakePool() {
