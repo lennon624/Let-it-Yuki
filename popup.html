@@ -43,35 +43,52 @@
     <p>在网页上添加美丽的雪花动画效果</p>
     <div class="controls">
         <button id="toggleBtn" class="off">开启雪花</button>
-        <div class="particle-control">
-            <label for="particleCount">雪花数量:</label>
-            <input type="range" id="particleCount" min="0" max="1200" value="400">
-            <span id="countValue">200</span>
+        <div class="snow-intensity-controls">
+            <label for="intensity">雪花强度:</label>
+            <div class="intensity-buttons">
+                <button id="lightBtn" class="intensity-btn active">小雪</button>
+                <button id="mediumBtn" class="intensity-btn">大雪</button>
+                <button id="heavyBtn" class="intensity-btn">暴雪</button>
+            </div>
         </div>
         <button id="settingsBtn">设置</button>
     </div>
 
     <style>
-        .particle-control {
+        .snow-intensity-controls {
             margin: 10px 0;
             text-align: center;
         }
-        .particle-control label {
+        .snow-intensity-controls label {
             display: block;
             font-size: 12px;
             color: #666;
             margin-bottom: 5px;
         }
-        .particle-control input[type="range"] {
-            width: 100%;
-            margin: 5px 0;
+        .intensity-buttons {
+            display: flex;
+            gap: 5px;
+            justify-content: center;
         }
-        .particle-control span {
-            display: inline-block;
-            min-width: 40px;
-            text-align: center;
-            font-weight: bold;
-            color: #333;
+        .intensity-btn {
+            padding: 4px 8px;
+            font-size: 11px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            background-color: #f5f5f5;
+            cursor: pointer;
+            flex: 1;
+        }
+        .intensity-btn.active {
+            background-color: #4CAF50;
+            color: white;
+            border-color: #4CAF50;
+        }
+        .intensity-btn:hover {
+            background-color: #e0e0e0;
+        }
+        .intensity-btn.active:hover {
+            background-color: #45a049;
         }
     </style>
 

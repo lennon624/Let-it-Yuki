@@ -1,3 +1,10 @@
+// 雪花强度配置
+const intensityConfig = {
+    light: 200,    // 小雪：200片
+    medium: 600,   // 大雪：600片
+    heavy: 1200    // 暴雪：1200片
+};
+
 // 雪花动画开关功能
 document.getElementById('toggleBtn').addEventListener('click', async () => {
     try {
@@ -29,19 +36,38 @@ document.getElementById('toggleBtn').addEventListener('click', async () => {
     }
 });
 
-// 雪花数量控制功能
-document.getElementById('particleCount').addEventListener('input', async (e) => {
-    try {
-        const newCount = parseInt(e.target.value);
-        document.getElementById('countValue').textContent = newCount;
+// 雪花强度控制功能
+document.getElementById('lightBtn').addEventListener('click', async () => {
+    await setSnowIntensity('light');
+});
 
+document.getElementById('mediumBtn').addEventListener('click', async () => {
+    await setSnowIntensity('medium');
+});
+
+document.getElementById('heavyBtn').addEventListener('click', async () => {
+    await setSnowIntensity('heavy');
+});
+
+// 设置雪花强度函数
+async function setSnowIntensity(intensity) {
+    try {
         const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+        const count = intensityConfig[intensity];
+
+        // 更新按钮状态
+        document.querySelectorAll('.intensity-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        document.getElementById(`${intensity}Btn`).classList.add('active');
+
+        // 发送消息到 content script
         chrome.tabs.sendMessage(tab.id, {
             action: 'setParticleCount',
-            count: newCount
+            count: count
         }, (response) => {
             if (chrome.runtime.lastError) {
-                console.error('设置雪花数量失败:', chrome.runtime.lastError);
+                console.error('设置雪花强度失败:', chrome.runtime.lastError);
                 return;
             }
 
@@ -52,7 +78,7 @@ document.getElementById('particleCount').addEventListener('input', async (e) => 
     } catch (error) {
         console.error('操作失败:', error);
     }
-});
+}
 
 // 设置按钮点击事件
 document.getElementById('settingsBtn').addEventListener('click', () => {
@@ -84,16 +110,30 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         });
 
-        // 获取当前雪花数量
+        // 获取当前雪花数量并更新按钮状态
         chrome.tabs.sendMessage(tab.id, { action: 'getParticleCount' }, (response) => {
             if (chrome.runtime.lastError) {
                 console.error('获取雪花数量失败:', chrome.runtime.lastError);
                 return;
             }
 
-            document.getElementById('particleCount').value = response.count;
-            document.getElementById('countValue').textContent = response.count;
-            document.getElementById('particleCount').max = response.maxCount;
+            // 根据当前数量判断强度级别并更新按钮
+            let intensity = 'light'; // 默认小雪
+            const count = response.count;
+
+            if (count <= 400) {
+                intensity = 'light';
+            } else if (count <= 800) {
+                intensity = 'medium';
+            } else {
+                intensity = 'heavy';
+            }
+
+            // 更新按钮状态
+            document.querySelectorAll('.intensity-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.getElementById(`${intensity}Btn`).classList.add('active');
         });
     } catch (error) {
         console.error('获取状态失败:', error);
