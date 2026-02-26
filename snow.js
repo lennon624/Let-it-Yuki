@@ -20,7 +20,7 @@ canvas.height = height;
 
 // 4. 雪花粒子系统（使用对象池技术）
 const snowflakes = [];
-const MAX_PARTICLES = 400; // 大幅增加雪花数量到 400 片
+const MAX_PARTICLES = 1200; // 大幅增加雪花数量到 1200 片
 
 // 创建雪花对象池
 function createSnowflakePool() {
@@ -39,7 +39,7 @@ class Snowflake {
     this.y = 0;
     this.radius = Math.random() * 1.5 + 0.2;
     this.density = Math.random() * MAX_PARTICLES;
-    this.opacity = Math.random() * 0.5 + 0.3; // 透明度从 0.3 到 0.8 随机
+    this.opacity = Math.random() * 0.7 + 0.3; // 透明度从 0.3 到 1.0 随机
     this.color = `rgba(255, 255, 255, ${this.opacity})`;
     this.angle = Math.random() * Math.PI * 2;
     this.wobble = Math.random() * 1000; // 摇摆属性的初始相位
@@ -55,7 +55,7 @@ class Snowflake {
     this.angle = Math.random() * Math.PI * 2;
     this.radius = Math.random() * 1.5 + 0.2;
     this.density = Math.random() * MAX_PARTICLES;
-    this.opacity = Math.random() * 0.5 + 0.3; // 重置透明度
+    this.opacity = Math.random() * 0.7 + 0.3; // 重置透明度（0.3 到 1.0 随机）
     this.color = `rgba(255, 255, 255, ${this.opacity})`; // 重新计算颜色
     this.wobble = Math.random() * 1000; // 重置摇摆相位
     this.wobbleFrequency = Math.random() * 0.02 + 0.01; // 重置摇摆频率
@@ -84,8 +84,9 @@ class Snowflake {
 
     // 水平移动：结合正弦摆动、摇摆效果和湍流
     this.x += Math.sin(this.angle) * 0.5 + wobbleAmount + turbulenceEffect;
-    // 垂直移动：速度受半径影响，模拟空气阻力
-    this.y += (Math.cos(this.angle + this.density) * 0.5 + 0.5) * speedFactor + (this.radius / 8);
+    // 垂直移动：速度受半径影响，大雪花下落快，小雪花下落慢
+    // 半径越大，速度越快，这样大雪花下落得更快
+    this.y += (Math.cos(this.angle + this.density) * 0.5 + 0.5) * speedFactor + (this.radius / 4);
 
     // 使用对象池技术：雪花掉出屏幕后重置到顶部，而非创建新对象
     if (this.y > height) {
@@ -127,17 +128,20 @@ class Snowflake {
 createSnowflakePool();
 
 // 雪花动画控制变量
-let isSnowEnabled = true;
+let isSnowEnabled = false; // 默认关闭雪花
 let animationId = null;
+let currentParticleCount = 400; // 默认显示的雪花数量
 
 // 动画循环控制
 function animate() {
   if (isSnowEnabled) {
     ctx.clearRect(0, 0, width, height);
-    snowflakes.forEach(flake => {
+    // 只更新和绘制指定数量的雪花
+    for (let i = 0; i < currentParticleCount; i++) {
+      const flake = snowflakes[i];
       flake.update();
       flake.draw();
-    });
+    }
   }
   animationId = requestAnimationFrame(animate);
 }
@@ -165,9 +169,28 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
   if (request.action === 'toggleSnow') {
     isSnowEnabled = !isSnowEnabled;
+
+    // 如果关闭雪花，立即清空画布
+    if (!isSnowEnabled) {
+      ctx.clearRect(0, 0, width, height);
+    }
+
     sendResponse({ isEnabled: isSnowEnabled });
   } else if (request.action === 'getStatus') {
     sendResponse({ isEnabled: isSnowEnabled });
+  } else if (request.action === 'setParticleCount') {
+    // 设置雪花数量
+    const newCount = request.count;
+    if (newCount >= 0 && newCount <= MAX_PARTICLES) {
+      currentParticleCount = newCount;
+      console.log('雪花数量已设置为:', currentParticleCount);
+      sendResponse({ success: true, count: currentParticleCount });
+    } else {
+      sendResponse({ success: false, error: '数量必须在 0 到 ' + MAX_PARTICLES + ' 之间' });
+    }
+  } else if (request.action === 'getParticleCount') {
+    // 获取当前雪花数量
+    sendResponse({ count: currentParticleCount, maxCount: MAX_PARTICLES });
   }
 
   // 确保异步消息能正常响应
