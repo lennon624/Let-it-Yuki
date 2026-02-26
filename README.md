@@ -1,64 +1,64 @@
 <div align="center">
 
-<!-- <img src="./assets/hero.gif" alt="letityuki 演示动图" width="100%" style="border-radius: 8px; border: 1px solid #eaeaea; margin-bottom: 24px;"> -->
+<!-- <img src="./assets/hero.gif" alt="letityuki Demo" width="100%" style="border-radius: 8px; border: 1px solid #eaeaea; margin-bottom: 24px;"> -->
 
 # ❄️ letityuki.
 
-*为你的屏幕降下一场初雪。*
+*Bring a gentle snowfall to your screen.*
 
 <br>
 </div>
 
-> 之前在 Google AI Studio 出一个下雪彩蛋，那种安静、不打扰的氛围简直是深夜对话的绝佳「视觉白噪音」（现在这个彩蛋悄悄下架了 😭）。
+> Google AI Studio used to have this beautiful, hidden snow easter egg. That quiet, unobtrusive vibe was the absolute perfect "visual white noise" for late-night coding (until they quietly killed it off 😭).
 > 
-> 既然官方不给用，干脆自己手搓一个，顺便让**所有网页**都能下雪。利用视差滚动和透明度映射，勉强在 2D 网页里骗出了点 3D 景深。不干扰操作，主打一个温和陪伴。
+> Since the official one is gone, I decided to hand-roll my own—and make it work on **any webpage**. By heavily relying on parallax scrolling and opacity mapping, I managed to fake some decent 3D depth on a flat 2D screen. It doesn't get in your way; it's just here to keep you company.
 
 <br>
 
-### 核心特性
+### Under the Hood
 
-- **假装有 3D（视差景深）**：近处的雪花大而清晰落得快，远处的雪花小而半透飘得慢，用物理视差强行拉出层次感。
-- **极其流畅**：纯原生 Canvas 绘制，**坚决不往你的 DOM 树里塞满屏的 `div` 垃圾**。引入对象池循环复用 200 个雪花，就算密度拉满也稳稳跑在 60 帧，内存毫无波澜。
-- **三角函数风**：放弃了直上直下的逻辑，套了个正弦波（`Math.sin()`）让雪花走出自然的“S 型”，每片雪花都有自己的摆动频率。
-- **告别像素点**：结合径向渐变与 `shadowBlur`，让雪花看起来毛茸茸的。
-- **深浅色自动切换**：如果网页是**深色模式**，雪花会采用 `lighter` 混合模式像发着微光；如果是**浅色模式**，会自动切成 `source-over` 带点淡蓝色半透明阴影，确保雪下得优雅。
-- **极简面板**：能一键启停就绝不多点一下。
-- **懂你的语言**：自动适配简体中文、英文、日语。
-
-<br>
-
-### 安装指南
-
-因为嫌麻烦（其实是还没来得及上架 Chrome 商店），目前只能手动加载一下：
-
-1. **下载解压**：去 [Releases 页面](https://github.com/lennon624/Let-it-Yuki/releases)，下载最新版的 `letityuki-v1.x.x.zip` 并解压。
-2. **打开扩展页**：浏览器输入 `chrome://extensions/`（Edge 是 `edge://extensions/`）。
-3. **硬核加载**：
-   - 打开右上角的「开发者模式」。
-   - 点击「加载已解压的扩展程序」，选中刚才解压出来的文件夹。
-
-*搞定。建议把拼图图标固定在工具栏，方便随时看雪。*
+- **Faking 3D (Parallax Depth)**: Large flakes fall fast in the foreground, while tiny, semi-transparent ones drift slowly in the back. Brute-forcing real depth with physics.
+- **Silky Smooth**: Pure vanilla Canvas rendering. **Absolutely zero DOM pollution (no screen full of `div` trash).** Uses an object pool to recycle 200 snowflakes. Even at max density, it runs at a rock-solid 60fps without sweating your RAM.
+- **Sine Wave Wind**: Ditched the boring straight-down logic. Slapped a `Math.sin()` on it so the flakes sway naturally in an "S" shape. Every flake has its own unique swing frequency.
+- **Goodbye Pixelation**: Combined radial gradients with `shadowBlur` to make the snowflakes look soft and fluffy.
+- **Smart Dark/Light Mode**: If your page is in **Dark Mode**, flakes use the `lighter` blend mode to emit a soft glow. In **Light Mode**, it switches to `source-over` with a faint blueish semi-transparent drop shadow, ensuring the snow looks elegant everywhere.
+- **Minimalist UI**: One click to toggle. No bloated menus.
+- **Speaks Your Language**: Auto-adapts to English, Simplified Chinese, and Japanese.
 
 <br>
 
-### 使用说明
+### Installation
 
-点开右上角 ❄️ 图标，呼出面板：
+Too lazy to publish it to the Chrome Web Store yet, so you'll have to load it the "hardcore" way for now:
 
-<!-- <img src="./assets/popupCN.jpg" alt="控制面板截图" width="280" style="border-radius: 6px; border: 1px solid #eaeaea; margin: 16px 0;"> -->
+1. **Download & Extract**: Grab the latest `letityuki-v1.x.x.zip` from the [Releases page](https://github.com/lennon624/Let-it-Yuki/releases) and unzip it.
+2. **Open Extensions**: Type `chrome://extensions/` (or `edge://extensions/`) in your browser.
+3. **The Hardcore Part**:
+   - Toggle **"Developer mode"** on the top right.
+   - Click **"Load unpacked"** and select the folder you just extracted.
 
-- **落雪**：总开关，一键下雪。
-- **降雪模式**：
-  - `粉雪`：存在感极低，适合需要极度专注的代码/阅读时间。
-  - `飘雪`：默认模式，雪量刚刚好。
-  - `吹雪`：满屏暴风雪，适合发呆摸鱼。
-- **雪花密度**：嫌雪不够大？拉动滑块自己造。
+*Done. Pro tip: pin the puzzle icon to your toolbar so you can make it snow whenever.*
 
 <br>
 
-### 开源协议
+### Usage
 
-本项目基于 [MIT License](./LICENSE) 协议开源。拿去随便玩。
+Click the ❄️ icon to pop open the panel:
+
+<!-- <img src="./assets/popupEN.jpg" alt="Popup UI" width="280" style="border-radius: 6px; border: 1px solid #eaeaea; margin: 16px 0;"> -->
+
+- **Snow**: The master switch. Let it snow.
+- **Mode**:
+  - `Powder`: Barely there. Perfect for deep-focus coding or reading.
+  - `Steady`: The default. Just the right amount of chill.
+  - `Blizzard`: Screen full of snow. Great for zoning out.
+- **Density**: Not enough snow? Drag the slider and make your own storm.
+
+<br>
+
+### License
+
+Open-sourced under the [MIT License](./LICENSE). Take it and play with it.
 
 <br>
 
