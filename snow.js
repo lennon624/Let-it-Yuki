@@ -18,12 +18,24 @@ class Snowflake {
     this.density = Math.random() * MAX_PARTICLES;
     // 建立半径与透明度的关联：半径越大，透明度越高（0.1 到 0.8）
     this.opacity = 0.1 + (this.radius / 1.6) * 0.7; // 最小0.1，最大0.8
-    this.color = `rgba(255, 255, 255, ${this.opacity})`;
     this.angle = Math.random() * Math.PI * 2;
     this.wobble = Math.random() * 1000; // 摇摆属性的初始相位
     this.wobbleFrequency = Math.random() * 0.02 + 0.01; // 摇摆频率
     this.turbulence = Math.random() * 0.5; // 湍流程度
     this.turbulenceTimer = Math.random() * 1000; // 湍流定时器
+    this.updateColor(); // 初始化时更新颜色
+  }
+
+  // 更新雪花颜色，根据主题调整
+  updateColor() {
+    if (isDarkTheme) {
+      // 深色模式：纯白色
+      this.color = `rgba(255, 255, 255, ${this.opacity})`;
+    } else {
+      // 浅色模式：稍深的淡蓝色
+      const blueTint = 210 + Math.random() * 25; // 蓝色值 210-235
+      this.color = `rgba(220, ${blueTint}, 255, ${this.opacity})`;
+    }
   }
 
   // 重置雪花到顶部
@@ -35,7 +47,7 @@ class Snowflake {
     this.density = Math.random() * MAX_PARTICLES;
     // 建立半径与透明度的关联：半径越大，透明度越高（0.1 到 0.8）
     this.opacity = 0.1 + (this.radius / 1.6) * 0.7; // 最小0.1，最大0.8
-    this.color = `rgba(255, 255, 255, ${this.opacity})`; // 重新计算颜色
+    this.updateColor(); // 重置时更新颜色
     this.wobble = Math.random() * 1000; // 重置摇摆相位
     this.wobbleFrequency = Math.random() * 0.02 + 0.01; // 重置摇摆频率
     this.turbulence = Math.random() * 0.5; // 重置湍流程度
@@ -72,10 +84,19 @@ class Snowflake {
   draw() {
     ctx.beginPath();
 
-    // 边缘发光效果：柔和的散景，shadowColor与填充颜色一致
-    const glowRadius = this.radius * 0.8; // 发光半径与雪花大小正相关
-    ctx.shadowBlur = glowRadius;
-    ctx.shadowColor = this.color; // shadowColor与填充颜色一致
+    // 根据主题设置阴影效果
+    if (isDarkTheme) {
+      // 深色模式：柔和散景，shadowColor与填充颜色一致
+      const glowRadius = this.radius * 0.8; // 发光半径与雪花大小正相关
+      ctx.shadowBlur = glowRadius;
+      ctx.shadowColor = this.color; // shadowColor与填充颜色一致
+    } else {
+      // 浅色模式：稍深的深色阴影，更好地勾勒雪花轮廓
+      const shadowBlur = 2; // 固定的阴影模糊
+      const shadowOpacity = 0.15; // 稍微深一点的阴影
+      ctx.shadowBlur = shadowBlur;
+      ctx.shadowColor = `rgba(0, 0, 0, ${shadowOpacity})`; // 深色阴影
+    }
 
     // 使用雪花自身的颜色（包含透明度信息）
     ctx.fillStyle = this.color;
@@ -195,16 +216,9 @@ if (window.matchMedia) {
     isDarkTheme = e.matches;
     console.log('主题变化:', e.matches ? '深色模式' : '浅色模式');
 
-    // 更新主题样式
-    if (ctx) {
-      if (isDarkTheme) {
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
-        ctx.shadowColor = 'rgba(255, 255, 255, 0.3)';
-      } else {
-        ctx.fillStyle = 'rgba(200, 200, 210, 0.7)';
-        ctx.shadowColor = 'rgba(0, 0, 0, 0.1)';
-      }
-    }
+    // 更新所有雪花的颜色
+    snowflakes.forEach(flake => flake.updateColor());
+
   });
 }
 
