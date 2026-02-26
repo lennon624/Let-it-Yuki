@@ -17,7 +17,11 @@ document.getElementById('toggleBtn').addEventListener('change', async (e) => {
 
             if (chrome.runtime.lastError) {
                 console.error('消息发送失败:', chrome.runtime.lastError);
-                alert('雪花效果未加载，请刷新页面重试');
+                // 消息发送失败，可能是 content script 未加载
+                // 将 toggle 状态重置为未开启
+                e.target.checked = false;
+                // 显示更友好的提示
+                alert('雪花效果未加载到当前页面，请刷新页面后重试');
                 return;
             }
 
@@ -28,6 +32,8 @@ document.getElementById('toggleBtn').addEventListener('change', async (e) => {
         });
     } catch (error) {
         console.error('操作失败:', error);
+        // 重置 toggle 状态
+        document.getElementById('toggleBtn').checked = false;
         alert('操作失败，请刷新页面重试');
     }
 });
@@ -148,6 +154,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         chrome.tabs.sendMessage(tab.id, { action: 'getParticleCount' }, (response) => {
             if (chrome.runtime.lastError) {
                 console.error('获取雪花数量失败:', chrome.runtime.lastError);
+                // 如果 content script 未加载，设置默认状态
+                document.getElementById('particleCount').value = 600;
+                document.getElementById('countValue').textContent = 600;
+                document.getElementById('mediumBtn').classList.add('active');
                 return;
             }
 
@@ -175,5 +185,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     } catch (error) {
         console.error('获取状态失败:', error);
+        // 设置默认状态
+        document.getElementById('toggleBtn').checked = false;
+        document.getElementById('particleCount').value = 600;
+        document.getElementById('countValue').textContent = 600;
+        document.getElementById('mediumBtn').classList.add('active');
     }
 });
