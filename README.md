@@ -45,7 +45,7 @@
 
 点开右上角 ❄️ 图标，呼出面板：
 
-<img src="./assets/popupCN.jpg" alt="控制面板截图" width="280" style="border-radius: 6px; border: 1px solid #eaeaea; margin: 16px 0;">
+<!-- <img src="./assets/popupCN.jpg" alt="控制面板截图" width="280" style="border-radius: 6px; border: 1px solid #eaeaea; margin: 16px 0;"> -->
 
 - **落雪**：总开关，一键下雪。
 - **降雪模式**：
