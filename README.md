@@ -20,7 +20,7 @@
 - **假装有 3D（视差景深）**：近处的雪花大而清晰落得快，远处的雪花小而半透飘得慢，用物理视差强行拉出层次感。
 - **极其流畅**：纯原生 Canvas 绘制，**坚决不往你的 DOM 树里塞满屏的 `div` 垃圾**。引入对象池循环复用 200 个雪花，就算密度拉满也稳稳跑在 60 帧，内存毫无波澜。
 - **三角函数风**：放弃了直上直下的逻辑，套了个正弦波（`Math.sin()`）让雪花走出自然的“S 型”，每片雪花都有自己的摆动频率。
-- **告别像素点（柔化边缘）**：结合径向渐变与 `shadowBlur`，让雪花看起来毛茸茸的。
+- **告别像素点**：结合径向渐变与 `shadowBlur`，让雪花看起来毛茸茸的。
 - **深浅色自动切换**：如果网页是**深色模式**，雪花会采用 `lighter` 混合模式像发着微光；如果是**浅色模式**，会自动切成 `source-over` 带点淡蓝色半透明阴影，确保雪下得优雅。
 - **极简面板**：能一键启停就绝不多点一下。
 - **懂你的语言**：自动适配简体中文、英文、日语。
@@ -45,7 +45,7 @@
 
 点开右上角 ❄️ 图标，呼出面板：
 
-<!-- <img src="./assets/popup.png" alt="控制面板截图" width="280" style="border-radius: 6px; border: 1px solid #eaeaea; margin: 16px 0;"> -->
+<img src="./assets/popupCN.png" alt="控制面板截图" width="280" style="border-radius: 6px; border: 1px solid #eaeaea; margin: 16px 0;">
 
 - **落雪**：总开关，一键下雪。
 - **降雪模式**：
@@ -60,7 +60,7 @@
 
 本项目基于 [MIT License](./LICENSE) 协议开源。拿去随便玩。
 
-<br><br>
+<br>
 
 <div align="center">
   <sub>💗 Come feel the heat, forever and forever. 💗</sub>
