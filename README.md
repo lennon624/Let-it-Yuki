@@ -2,6 +2,10 @@
 
 <!-- <img src="./assets/hero.gif" alt="letityuki Demo" width="100%" style="border-radius: 8px; border: 1px solid #eaeaea; margin-bottom: 24px;"> -->
 
+<div style="text-align: right;">
+  <a href="./README-CN.md">🇨🇳 中文版本</a>
+</div>
+
 # ❄️ letityuki.
 
 *Bring a gentle snowfall to your screen.*
