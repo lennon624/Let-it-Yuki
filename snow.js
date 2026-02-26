@@ -67,23 +67,15 @@ class Snowflake {
     // 空气阻力模拟：大雪花受到的阻力大，飘得慢
     const speedFactor = 1.2 - (this.radius / 2.5); // 半径越大，速度越慢
 
-    // 摇摆效果（Wobble）
+    // 摇摆效果（Wobble）优化
     this.wobble += this.wobbleFrequency;
     const wobbleAmount = Math.sin(this.wobble) * (0.3 + this.radius * 0.1);
-
-    // 湍流（Turbulence）：非常偶尔的乱风，只有几片雪花会触发
-    let turbulenceEffect = 0;
-    // 极低概率触发乱风：每 2000 帧中只有 10 帧可能触发
-    if (this.turbulenceTimer > 1990 && Math.random() < 0.05) {
-      turbulenceEffect = Math.sin(this.turbulenceTimer * 0.05) * 0.8; // 进一步降低乱风强度
-    }
-    this.turbulenceTimer = (this.turbulenceTimer + 1) % 2000; // 大幅延长湍流周期
 
     // 角度更新
     this.angle += 0.005;
 
-    // 水平移动：结合正弦摆动、摇摆效果和湍流
-    this.x += Math.sin(this.angle) * 0.5 + wobbleAmount + turbulenceEffect;
+    // 水平移动：结合正弦摆动、摇摆效果（简化了湍流计算）
+    this.x += Math.sin(this.angle) * 0.5 + wobbleAmount;
     // 垂直移动：速度受半径影响，大雪花下落快，小雪花下落慢
     // 半径越大，速度越快，这样大雪花下落得更快
     this.y += (Math.cos(this.angle + this.density) * 0.5 + 0.5) * speedFactor + (this.radius / 4);
@@ -99,24 +91,12 @@ class Snowflake {
   draw() {
     ctx.beginPath();
 
-    // 为稍大的雪花添加发光效果，小雪花保持自然
+    // 优化阴影模糊，避免过大值影响性能
     if (this.radius > 1.0) {
-        const glowRadius = 2 + this.radius * 1.5; // 发光半径根据雪花大小计算
+        const glowRadius = Math.min(3, 1 + this.radius * 1); // 限制最大发光半径
         ctx.shadowBlur = glowRadius;
     } else {
         ctx.shadowBlur = 0; // 小雪花不添加发光效果
-    }
-
-    // 根据系统深色/浅色模式调整雪花颜色
-    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-        // 深色模式：雪花白一点，发光
-        ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`; // 使用随机透明度
-        ctx.shadowColor = "rgba(255, 255, 255, 0.3)"; // 浅色阴影，在深色背景上更明显
-    } else {
-        // 浅色模式：雪花带点蓝灰，或者加阴影
-        // 保留蓝色调，但应用随机透明度
-        ctx.fillStyle = `rgba(200, 200, 210, ${this.opacity})`;
-        ctx.shadowColor = "rgba(0,0,0,0.1)";
     }
 
     ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, true);
@@ -127,19 +107,56 @@ class Snowflake {
 // 初始化雪花对象池
 createSnowflakePool();
 
+// 初始化主题
+initTheme();
+
 // 雪花动画控制变量
 let isSnowEnabled = false; // 默认关闭雪花
 let animationId = null;
-let currentParticleCount = 400; // 默认显示的雪花数量
+let currentParticleCount = 600; // 默认显示的雪花数量（大雪）
+let isDarkTheme = false; // 主题状态
+
+// 初始化主题
+function initTheme() {
+  if (window.matchMedia) {
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    isDarkTheme = mediaQuery.matches;
+
+    // 根据主题设置画布样式
+    if (isDarkTheme) {
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+      ctx.shadowColor = 'rgba(255, 255, 255, 0.3)';
+    } else {
+      ctx.fillStyle = 'rgba(200, 200, 210, 0.7)';
+      ctx.shadowColor = 'rgba(0, 0, 0, 0.1)';
+    }
+  }
+}
 
 // 动画循环控制
 function animate() {
   if (isSnowEnabled) {
     ctx.clearRect(0, 0, width, height);
     // 只更新和绘制指定数量的雪花
+    let lastShadowBlur = null;
     for (let i = 0; i < currentParticleCount; i++) {
       const flake = snowflakes[i];
       flake.update();
+
+      // 优化阴影设置：只有在阴影模糊值变化时才更新
+      if (flake.radius > 1.0) {
+        const glowRadius = Math.min(3, 1 + flake.radius * 1);
+        if (lastShadowBlur !== glowRadius) {
+          ctx.shadowBlur = glowRadius;
+          lastShadowBlur = glowRadius;
+        }
+      } else {
+        if (lastShadowBlur !== 0) {
+          ctx.shadowBlur = 0;
+          lastShadowBlur = 0;
+        }
+      }
+
       flake.draw();
     }
   }
@@ -159,7 +176,17 @@ if (window.matchMedia) {
   const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
 
   mediaQuery.addEventListener('change', (e) => {
+    isDarkTheme = e.matches;
     console.log('主题变化:', e.matches ? '深色模式' : '浅色模式');
+
+    // 更新主题样式
+    if (isDarkTheme) {
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+      ctx.shadowColor = 'rgba(255, 255, 255, 0.3)';
+    } else {
+      ctx.fillStyle = 'rgba(200, 200, 210, 0.7)';
+      ctx.shadowColor = 'rgba(0, 0, 0, 0.1)';
+    }
   });
 }
 
