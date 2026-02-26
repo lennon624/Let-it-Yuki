@@ -7,10 +7,12 @@
     {
       "matches": ["http://*/*", "https://*/*"],
       "js": ["snow.js"],
-      "run_at": "document_idle"
+      "run_at": "document_start",
+      "all_frames": true
     }
   ],
   "host_permissions": ["http://*/*", "https://*/*"],
+  "permissions": ["scripting"],
   "action": {
     "default_popup": "popup.html"
   }

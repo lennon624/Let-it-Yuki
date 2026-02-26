@@ -10,6 +10,7 @@ Thumbs.db
 # 日志文件
 *.log
 *.err
+*.txt
 
 # 临时文件
 *.tmp
@@ -19,6 +20,10 @@ Thumbs.db
 # Chrome 插件开发临时文件
 *.crx
 *.pem
+
+# Node.js 依赖
+node_modules/
+package-lock.json
 
 # 测试和调试文件
 debug.log

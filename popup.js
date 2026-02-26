@@ -17,11 +17,33 @@ document.getElementById('toggleBtn').addEventListener('change', async (e) => {
 
             if (chrome.runtime.lastError) {
                 console.error('消息发送失败:', chrome.runtime.lastError);
-                // 消息发送失败，可能是 content script 未加载
-                // 将 toggle 状态重置为未开启
-                e.target.checked = false;
-                // 显示更友好的提示
-                alert('雪花效果未加载到当前页面，请刷新页面后重试');
+                // 尝试直接注入 content script
+                try {
+                    chrome.scripting.executeScript(
+                        {
+                            target: { tabId: tab.id },
+                            files: ['snow.js']
+                        },
+                        () => {
+                            // 注入成功后再次发送消息
+                            chrome.tabs.sendMessage(tab.id, { action: 'toggleSnow' }, (response2) => {
+                                if (chrome.runtime.lastError) {
+                                    console.error('再次发送消息失败:', chrome.runtime.lastError);
+                                    e.target.checked = false;
+                                    alert('雪花效果加载失败，请刷新页面后重试');
+                                    return;
+                                }
+                                // 注入成功后的处理
+                                const toggleBtn = document.getElementById('toggleBtn');
+                                toggleBtn.checked = response2.isEnabled;
+                            });
+                        }
+                    );
+                } catch (injectError) {
+                    console.error('注入脚本失败:', injectError);
+                    e.target.checked = false;
+                    alert('雪花效果加载失败，请刷新页面后重试');
+                }
                 return;
             }
 
